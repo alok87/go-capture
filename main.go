@@ -1,4 +1,4 @@
-package capturer
+package capture
 
 import (
 	"bytes"
@@ -6,37 +6,40 @@ import (
 	"os"
 )
 
-// Capturer has flags whether capture stdout/stderr or not.
-type Capturer struct {
-	captureStdout bool
-	captureStderr bool
+// Stdout captures stdout.
+func Stdout(f func()) string {
+	c := &capturer{stdout: true}
+	
+	return c.capture(f)
 }
 
-// CaptureStdout captures stdout.
-func CaptureStdout(f func()) string {
-	capturer := &Capturer{captureStdout: true}
-	return capturer.capture(f)
+// Stderr captures stderr.
+func Stderr(f func()) string {
+	c := &capturer{stderr: true}
+	
+	return c.capture(f)
 }
 
-// CaptureStderr captures stderr.
-func CaptureStderr(f func()) string {
-	capturer := &Capturer{captureStderr: true}
-	return capturer.capture(f)
+// Output captures stdout and stderr.
+func Output(f func()) string {
+	c := &capturer{stdout: true, stderr: true}
+	
+	return c.capture(f)
 }
 
-// CaptureOutput captures stdout and stderr.
-func CaptureOutput(f func()) string {
-	capturer := &Capturer{captureStdout: true, captureStderr: true}
-	return capturer.capture(f)
+// capturer has flags whether capture stdout/stderr or both.
+type capturer struct {
+	stdout bool
+	stderr bool
 }
 
-func (capturer *Capturer) capture(f func()) string {
+func (c *capturer) capture(f func()) string {
 	r, w, err := os.Pipe()
 	if err != nil {
 		panic(err)
 	}
 
-	if capturer.captureStdout {
+	if c.stdout {
 		stdout := os.Stdout
 		os.Stdout = w
 		defer func() {
@@ -44,7 +47,7 @@ func (capturer *Capturer) capture(f func()) string {
 		}()
 	}
 
-	if capturer.captureStderr {
+	if c.stderr {
 		stderr := os.Stderr
 		os.Stderr = w
 		defer func() {

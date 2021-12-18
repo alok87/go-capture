@@ -1,34 +1,38 @@
-package capturer
+package capture
 
 import (
 	"fmt"
 	"os"
+	"testing"
 )
 
-func ExampleCaptureStdout() {
-	out := CaptureStdout(func() {
-		fmt.Fprint(os.Stdout, "foo")
+func TestStdout(t *testing.T) {
+	out := Stdout(func() {
+		fmt.Fprint(os.Stdout, "stdout")
 	})
 
-	fmt.Println(out)
-	// Output: foo
+	if out != "stdout" {
+		t.Errorf("expected: stdout, got: %v", out)
+	}
 }
 
-func ExampleCaptureStderr() {
-	out := CaptureStderr(func() {
-		fmt.Fprint(os.Stderr, "bar")
+func TestStderr(t *testing.T) {
+	out := Stderr(func() {
+		fmt.Fprint(os.Stderr, "stderr")
 	})
 
-	fmt.Println(out)
-	// Output: bar
+	if out != "stderr" {
+		t.Errorf("expected: stderr, got: %v", out)
+	}
 }
 
-func ExampleCaptureOutput() {
-	out := CaptureOutput(func() {
-		fmt.Fprint(os.Stdout, "foo")
-		fmt.Fprint(os.Stderr, "bar")
+func TestOutput(t *testing.T) {
+	out := Output(func() {
+		fmt.Fprint(os.Stdout, "stdout")
+		fmt.Fprint(os.Stderr, "stderr")
 	})
 
-	fmt.Println(out)
-	// Output: foobar
+	if out != "stdoutstderr" {
+		t.Errorf("expected: stdoutstderr, got: %v", out)
+	}
 }

@@ -1,4 +1,4 @@
-# go-capturer
+# go-capture
 
 Capture `os.Stdout` and/or `os.Stderr` in Go.
 This package is useful for writing tests which print some outputs using `fmt` package.
